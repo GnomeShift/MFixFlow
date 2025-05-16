@@ -1,0 +1,110 @@
+package com.gnomeshift.mfixflow.fixRequest;
+
+import com.gnomeshift.mfixflow.defect.DefectRepository;
+import com.gnomeshift.mfixflow.device.DeviceRepository;
+import com.gnomeshift.mfixflow.user.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class FixRequestService {
+    @Autowired
+    private DefectRepository defectRepository;
+
+    @Autowired
+    private DeviceRepository deviceRepository;
+
+    @Autowired
+    private FixRequestRepository fixRequestRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    private FixRequestDTO convertToDTO(FixRequest fixRequest) {
+        FixRequestDTO dto = new FixRequestDTO();
+
+        dto.setId(fixRequest.getId());
+        dto.setTitle(fixRequest.getTitle());
+        dto.setDescription(fixRequest.getDescription());
+        dto.setStatus(fixRequest.getStatus());
+
+        if (fixRequest.getMaster() != null) {
+            dto.setMasterId(fixRequest.getMaster().getId());
+        }
+
+        if (fixRequest.getDevice() != null) {
+            dto.setDeviceId(fixRequest.getDevice().getId());
+        }
+
+        if (fixRequest.getDefect() != null) {
+            dto.setDefectId(fixRequest.getDefect().getId());
+        }
+
+        return dto;
+    }
+
+    public List<FixRequestDTO> getAllRequests() {
+        return fixRequestRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    public FixRequestDTO getRequestById(long id) {
+        return fixRequestRepository.findById(id).map(this::convertToDTO)
+                .orElseThrow(() -> new EntityNotFoundException("Fix request not found"));
+    }
+
+    public List<FixRequestDTO> getAllRequestsByDeviceId(long id) {
+        return fixRequestRepository.findAllByDeviceId(id).stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    public List<FixRequestDTO> getAllRequestsByMasterId(long id) {
+        return fixRequestRepository.findAllByMasterId(id).stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    public List<FixRequestDTO> getAllRequestsByDefectId(long id) {
+        return fixRequestRepository.findAllByDefectId(id).stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    private FixRequestDTO fillFixRequestDTO(FixRequestDTO fixRequestDTO, FixRequest fixRequest) {
+        fixRequest.setTitle(fixRequestDTO.getTitle());
+        fixRequest.setDescription(fixRequestDTO.getDescription());
+        fixRequest.setStatus(fixRequestDTO.getStatus());
+
+        fixRequest.setMaster(userRepository.findById(fixRequestDTO.getMasterId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found")));
+
+        if (fixRequest.getDevice() != null) {
+            fixRequest.setDevice(deviceRepository.findById(fixRequestDTO.getDeviceId())
+                    .orElseThrow(() -> new EntityNotFoundException("Device not found")));
+        }
+
+        if (fixRequest.getDefect() != null) {
+            fixRequest.setDefect(defectRepository.findById(fixRequestDTO.getDefectId())
+                    .orElseThrow(() -> new EntityNotFoundException("Defect not found")));
+        }
+
+        return convertToDTO(fixRequestRepository.save(fixRequest));
+    }
+
+    public FixRequestDTO addRequest(FixRequestDTO fixRequestDTO) {
+        FixRequest fixRequest = new FixRequest();
+        return fillFixRequestDTO(fixRequestDTO, fixRequest);
+    }
+
+    public FixRequestDTO updateRequest(long id, FixRequestDTO fixRequestDTO) {
+        FixRequest fixRequest = fixRequestRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Fix request not found"));
+        return fillFixRequestDTO(fixRequestDTO, fixRequest);
+    }
+
+    public void deleteRequest(long id) {
+        if (!fixRequestRepository.existsById(id)) {
+            throw new EntityNotFoundException("Fix request not found");
+        }
+
+        fixRequestRepository.deleteById(id);
+    }
+}
