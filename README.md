@@ -51,18 +51,18 @@ gradlew bootRun
 
 В таблице ниже приведены доступные API-Endpoints.
 
-| API-Endpoint                             | Метод  | Описание                           |
-|------------------------------------------|--------|------------------------------------|
-| {baseUrl}**/api/users**                  | GET    | Поиск всех пользователей           |
-| {baseUrl}**/api/users/{id}**             | GET    | Поиск пользователя по ID           |
-| {baseUrl}**/api/users**                  | POST   | Создание пользователя              |
-| {baseUrl}**/api/users/{id}**             | PUT    | Обновление пользователя            |
-| {baseUrl}**/api/users/{id}**             | DELETE | Удаление пользователя              |
-| {baseUrl}**/api/requests**               | GET    | Поиск всех заявок                  |
-| {baseUrl}**/api/requests/{id}**          | GET    | Поиск заявки по ID                 |
-| {baseUrl}**/api/requests/bydevice/{id}** | GET    | Поиск заявки по устройству         |
-| {baseUrl}**/api/requests/bymaster/{id}** | GET    | Поиск заявки по мастеру            |
-| {baseUrl}**/api/requests/bydefect/{id}** | GET    | Поиск заявки по типу неисправности |
-| {baseUrl}**/api/requests**               | POST   | Создание новой заявки              |
-| {baseUrl}**/api/requests/{id}**          | PUT    | Обновление заявки                  |
-| {baseUrl}**/api/requests/{id}**          | DELETE | Удаление заявки                    |
+| API-Endpoint                               | Метод  | Описание                           |
+|--------------------------------------------|--------|------------------------------------|
+| {baseUrl}**/api/users**                    | GET    | Поиск всех пользователей           |
+| {baseUrl}**/api/users/{id}**               | GET    | Поиск пользователя по ID           |
+| {baseUrl}**/api/users**                    | POST   | Создание пользователя              |
+| {baseUrl}**/api/users/{id}**               | PUT    | Обновление пользователя            |
+| {baseUrl}**/api/users/{id}**               | DELETE | Удаление пользователя              |
+| {baseUrl}**/api/requests**                 | GET    | Поиск всех заявок                  |
+| {baseUrl}**/api/requests/{id}**            | GET    | Поиск заявки по ID                 |
+| {baseUrl}**/api/requests/bydevice/{id}**   | GET    | Поиск заявки по устройству         |
+| {baseUrl}**/api/requests/byassignee/{id}** | GET    | Поиск заявки по назначенному       |
+| {baseUrl}**/api/requests/bydefect/{id}**   | GET    | Поиск заявки по типу неисправности |
+| {baseUrl}**/api/requests**                 | POST   | Создание новой заявки              |
+| {baseUrl}**/api/requests/{id}**            | PUT    | Обновление заявки                  |
+| {baseUrl}**/api/requests/{id}**            | DELETE | Удаление заявки                    |

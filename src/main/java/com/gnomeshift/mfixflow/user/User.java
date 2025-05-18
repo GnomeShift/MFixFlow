@@ -32,7 +32,7 @@ public class User {
     @NotNull
     private String password;
 
-    @OneToMany(mappedBy = "master", cascade = CascadeType.ALL)
-    @JsonManagedReference(value = "masterReference")
+    @OneToMany(mappedBy = "assignee", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "assigneeReference")
     private List<FixRequest> fixRequests;
 }

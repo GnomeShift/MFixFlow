@@ -31,11 +31,11 @@ public class FixRequest {
     @Enumerated(EnumType.STRING)
     private FixRequestStatus status;
 
-    @NotNull(message = "Master must be specified")
+    @NotNull(message = "User must be specified")
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonBackReference(value = "masterReference")
-    private User master;
+    @JsonBackReference(value = "assigneeReference")
+    private User assignee;
 
     @NotNull(message = "Device must be specified")
     @ManyToOne

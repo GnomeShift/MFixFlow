@@ -32,8 +32,8 @@ public class FixRequestService {
         dto.setDescription(fixRequest.getDescription());
         dto.setStatus(fixRequest.getStatus());
 
-        if (fixRequest.getMaster() != null) {
-            dto.setMasterId(fixRequest.getMaster().getId());
+        if (fixRequest.getAssignee() != null) {
+            dto.setAssigneeId(fixRequest.getAssignee().getId());
         }
 
         if (fixRequest.getDevice() != null) {
@@ -60,8 +60,8 @@ public class FixRequestService {
         return fixRequestRepository.findAllByDeviceId(id).stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
-    public List<FixRequestDTO> getAllRequestsByMasterId(long id) {
-        return fixRequestRepository.findAllByMasterId(id).stream().map(this::convertToDTO).collect(Collectors.toList());
+    public List<FixRequestDTO> getAllRequestsByAssigneeId(long id) {
+        return fixRequestRepository.findAllByAssigneeId(id).stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     public List<FixRequestDTO> getAllRequestsByDefectId(long id) {
@@ -73,7 +73,7 @@ public class FixRequestService {
         fixRequest.setDescription(fixRequestDTO.getDescription());
         fixRequest.setStatus(fixRequestDTO.getStatus());
 
-        fixRequest.setMaster(userRepository.findById(fixRequestDTO.getMasterId())
+        fixRequest.setAssignee(userRepository.findById(fixRequestDTO.getAssigneeId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found")));
 
         if (fixRequest.getDevice() != null) {

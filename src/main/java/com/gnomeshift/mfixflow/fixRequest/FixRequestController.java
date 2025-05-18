@@ -28,9 +28,9 @@ public class FixRequestController {
         return fixRequestService.getAllRequestsByDeviceId(id);
     }
 
-    @GetMapping("/bymaster/{id}")
-    public List<FixRequestDTO> getAllRequestsByMasterId(@PathVariable int id) {
-        return fixRequestService.getAllRequestsByMasterId(id);
+    @GetMapping("/byassignee/{id}")
+    public List<FixRequestDTO> getAllRequestsByAssigneeId(@PathVariable int id) {
+        return fixRequestService.getAllRequestsByAssigneeId(id);
     }
 
     @GetMapping("/bydefect/{id}")
