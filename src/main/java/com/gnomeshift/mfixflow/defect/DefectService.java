@@ -31,10 +31,9 @@ public class DefectService {
                 .orElseThrow(() -> new EntityNotFoundException("Defect not found"));
     }
 
-    private DefectDTO fillDefectDTO(Defect defect, DefectDTO dto) {
-        dto.setId(defect.getId());
-        dto.setDescription(defect.getDescription());
-        dto.setName(defect.getName());
+    private DefectDTO fillDefectDTO(Defect defect, DefectDTO defectDTO) {
+        defect.setDescription(defectDTO.getDescription());
+        defect.setName(defectDTO.getName());
 
         return convertToDTO(defectRepository.save(defect));
     }

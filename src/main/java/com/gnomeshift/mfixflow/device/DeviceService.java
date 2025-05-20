@@ -32,11 +32,8 @@ public class DeviceService {
     }
 
     private DeviceDTO fillDeviceDTO(Device device, DeviceDTO deviceDTO) {
-        DeviceDTO dto = new DeviceDTO();
-
-        dto.setId(device.getId());
-        dto.setName(device.getName());
-        dto.setDescription(device.getDescription());
+        device.setName(deviceDTO.getName());
+        device.setDescription(deviceDTO.getDescription());
 
         return convertToDTO(deviceRepository.save(device));
     }
