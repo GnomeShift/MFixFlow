@@ -2,11 +2,16 @@ package com.gnomeshift.mfixflow.fixRequest;
 
 import com.gnomeshift.mfixflow.defect.DefectRepository;
 import com.gnomeshift.mfixflow.device.DeviceRepository;
+import com.gnomeshift.mfixflow.statusLogger.StatusChangeEvent;
+import com.gnomeshift.mfixflow.statusLogger.StatusLog;
+import com.gnomeshift.mfixflow.statusLogger.StatusLogRepository;
 import com.gnomeshift.mfixflow.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +28,12 @@ public class FixRequestService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private StatusLogRepository statusLogRepository;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     private FixRequestDTO convertToDTO(FixRequest fixRequest) {
         FixRequestDTO dto = new FixRequestDTO();
@@ -45,6 +56,18 @@ public class FixRequestService {
         }
 
         return dto;
+    }
+
+    public void updateStatus(FixRequest fixRequest, FixRequestDTO fixRequestDTO,  FixRequestStatus status) {
+        if (!fixRequest.getStatus().equals(status)) {
+            StatusLog log = new StatusLog();
+
+            log.setFixRequest(fixRequest);
+            log.setStatus(status);
+            statusLogRepository.save(log);
+            fixRequest.setStatus(status);
+            eventPublisher.publishEvent(new StatusChangeEvent(this, fixRequestDTO.getId(), status, LocalDateTime.now()));
+        }
     }
 
     public List<FixRequestDTO> getAllRequests() {
@@ -76,15 +99,11 @@ public class FixRequestService {
         fixRequest.setAssignee(userRepository.findById(fixRequestDTO.getAssigneeId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found")));
 
-        if (fixRequest.getDevice() != null) {
-            fixRequest.setDevice(deviceRepository.findById(fixRequestDTO.getDeviceId())
-                    .orElseThrow(() -> new EntityNotFoundException("Device not found")));
-        }
+        fixRequest.setDevice(deviceRepository.findById(fixRequestDTO.getDeviceId())
+                .orElseThrow(() -> new EntityNotFoundException("Device not found")));
 
-        if (fixRequest.getDefect() != null) {
-            fixRequest.setDefect(defectRepository.findById(fixRequestDTO.getDefectId())
-                    .orElseThrow(() -> new EntityNotFoundException("Defect not found")));
-        }
+        fixRequest.setDefect(defectRepository.findById(fixRequestDTO.getDefectId())
+                .orElseThrow(() -> new EntityNotFoundException("Defect not found")));
 
         return convertToDTO(fixRequestRepository.save(fixRequest));
     }
@@ -97,6 +116,7 @@ public class FixRequestService {
     public FixRequestDTO updateRequest(long id, FixRequestDTO fixRequestDTO) {
         FixRequest fixRequest = fixRequestRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Fix request not found"));
+        updateStatus(fixRequest, fixRequestDTO, fixRequestDTO.getStatus());
         return fillFixRequestDTO(fixRequestDTO, fixRequest);
     }
 
