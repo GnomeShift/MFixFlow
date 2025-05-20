@@ -27,7 +27,7 @@ public class FixRequest {
     @NotBlank(message = "Description must be specified")
     private String description;
 
-    @NotBlank(message = "Status must be specified")
+    @NotNull
     @Enumerated(EnumType.STRING)
     private FixRequestStatus status;
 
