@@ -1,5 +1,7 @@
 package com.gnomeshift.mfixflow.fixRequest;
 
+import com.gnomeshift.mfixflow.statusLogger.StatusLogDTO;
+import com.gnomeshift.mfixflow.statusLogger.StatusLogService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,25 @@ import java.util.List;
 public class FixRequestController {
     @Autowired
     private FixRequestService fixRequestService;
+
+    @Autowired
+    private StatusLogService statusLogService;
+
+    @GetMapping("/{id}/logs")
+    public List<StatusLogDTO> getAllLogs(@PathVariable int id) {
+        return statusLogService.getAllLogs(id);
+    }
+
+    @DeleteMapping("/logs")
+    public ResponseEntity<StatusLogDTO> deleteLogs() {
+        try {
+            statusLogService.deleteAllLogs();
+            return ResponseEntity.ok().build();
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 
     @GetMapping
     public List<FixRequestDTO> getAllRequests() {
