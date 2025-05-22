@@ -19,6 +19,7 @@ public class UserService {
         userDTO.setName(user.getName());
         userDTO.setEmail(user.getEmail());
         userDTO.setFixRequests(user.getFixRequests());
+        userDTO.setRoles(user.getRoles());
 
         return userDTO;
     }
@@ -32,10 +33,6 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
-    public User addUser(User user) {
-        return userRepository.save(user);
-    }
-
     public UserDTO updateUser(long id, UserDTO userDTO) {
         User existingUser = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
 
@@ -43,8 +40,7 @@ public class UserService {
         existingUser.setEmail(userDTO.getEmail());
         existingUser.setFixRequests(userDTO.getFixRequests());
 
-        User updatedUser = userRepository.save(existingUser);
-        return convertToDTO(updatedUser);
+        return convertToDTO(userRepository.save(existingUser));
     }
 
     public void deleteUser(long id) {
