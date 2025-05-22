@@ -44,17 +44,17 @@ public class FixRequestController {
         return fixRequestService.getRequestById(id);
     }
 
-    @GetMapping("/bydevice/{id}")
+    @GetMapping("/by-device/{id}")
     public List<FixRequestDTO> getAllRequestsByDeviceId(@PathVariable int id) {
         return fixRequestService.getAllRequestsByDeviceId(id);
     }
 
-    @GetMapping("/byassignee/{id}")
+    @GetMapping("/by-assignee/{id}")
     public List<FixRequestDTO> getAllRequestsByAssigneeId(@PathVariable int id) {
         return fixRequestService.getAllRequestsByAssigneeId(id);
     }
 
-    @GetMapping("/bydefect/{id}")
+    @GetMapping("/by-defect/{id}")
     public List<FixRequestDTO> getAllRequestsByDefectId(@PathVariable int id) {
         return fixRequestService.getAllRequestsByDefectId(id);
     }
