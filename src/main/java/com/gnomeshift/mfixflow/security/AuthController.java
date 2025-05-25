@@ -1,6 +1,7 @@
 package com.gnomeshift.mfixflow.security;
 
 import com.gnomeshift.mfixflow.security.request.LoginRequest;
+import com.gnomeshift.mfixflow.security.request.ChangePasswordRequest;
 import com.gnomeshift.mfixflow.security.request.RegisterRequest;
 import com.gnomeshift.mfixflow.security.response.JwtResponse;
 import com.gnomeshift.mfixflow.security.response.MessageResponse;
@@ -21,10 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
 import java.util.List;
@@ -40,16 +38,18 @@ public class AuthController {
     private final PasswordEncoder encoder;
     private final JwtUtils jwtUtils;
     private final BruteforceProtectionService bruteforceProtection;
+    private final UserService userService;
 
     public AuthController(AuthenticationManager authManager, UserRepository userRepository,
                           RoleRepository roleRepository, PasswordEncoder encoder, JwtUtils jwtUtils,
-                          BruteforceProtectionService bruteforceProtection) {
+                          BruteforceProtectionService bruteforceProtection, UserService userService) {
         this.authManager = authManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.encoder = encoder;
         this.jwtUtils = jwtUtils;
         this.bruteforceProtection = bruteforceProtection;
+        this.userService = userService;
     }
 
     @PostMapping("/login")
@@ -132,5 +132,19 @@ public class AuthController {
         user.setRoles(roles);
         userRepository.save(user);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/cp")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+        try {
+            userService.changePassword(changePasswordRequest);
+            return ResponseEntity.ok().build();
+        }
+        catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+        catch (BadCredentialsException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

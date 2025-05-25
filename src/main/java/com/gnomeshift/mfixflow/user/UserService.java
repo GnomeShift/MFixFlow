@@ -1,7 +1,10 @@
 package com.gnomeshift.mfixflow.user;
 
+import com.gnomeshift.mfixflow.security.request.ChangePasswordRequest;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,6 +14,9 @@ import java.util.stream.Collectors;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private UserDTO convertToDTO(User user) {
         UserDTO userDTO = new UserDTO();
@@ -49,5 +55,20 @@ public class UserService {
         }
 
         userRepository.deleteById(id);
+    }
+
+    public void changePassword(ChangePasswordRequest changePasswordRequest) {
+        if (!userRepository.existsByEmail(changePasswordRequest.getEmail())) {
+            throw new EntityNotFoundException("User not found");
+        }
+
+        User user = userRepository.findByEmail(changePasswordRequest.getEmail());
+
+        if (!passwordEncoder.matches(changePasswordRequest.getOldPassword(), user.getPassword())) {
+            throw new BadCredentialsException("Invalid credentials!");
+        }
+
+        user.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
+        userRepository.save(user);
     }
 }
