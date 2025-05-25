@@ -1,4 +1,4 @@
-package com.gnomeshift.mfixflow.user;
+package com.gnomeshift.mfixflow.device;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,20 +8,25 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
-public class UserController {
+@RequestMapping("/api/devices")
+public class DeviceController {
     @Autowired
-    private UserService userService;
+    private DeviceService deviceService;
 
     @GetMapping
-    public List<UserDTO> getAllUsers() {
-        return userService.getAllUsers();
+    public List<DeviceDTO> getAllDevices() {
+        return deviceService.getAllDevices();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable long id) {
+    public DeviceDTO getDeviceById(@PathVariable long id) {
+        return deviceService.getDeviceById(id);
+    }
+
+    @PostMapping
+    public ResponseEntity<DeviceDTO> addDevice(@RequestBody DeviceDTO deviceDTO) {
         try {
-            return ResponseEntity.ok(userService.getUserById(id));
+            return ResponseEntity.ok(deviceService.addDevice(deviceDTO));
         }
         catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -29,9 +34,9 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable long id, @RequestBody UserDTO userDTO) {
+    public ResponseEntity<DeviceDTO> updateDevice(@PathVariable long id, @RequestBody DeviceDTO deviceDTO) {
         try {
-            return ResponseEntity.ok(userService.updateUser(id, userDTO));
+            return ResponseEntity.ok(deviceService.updateDevice(id, deviceDTO));
         }
         catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -39,9 +44,9 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<User> deleteUser(@PathVariable long id) {
+    public ResponseEntity<DeviceDTO> deleteDevice(@PathVariable long id) {
         try {
-            userService.deleteUser(id);
+            deviceService.deleteDevice(id);
             return ResponseEntity.noContent().build();
         }
         catch (EntityNotFoundException e) {

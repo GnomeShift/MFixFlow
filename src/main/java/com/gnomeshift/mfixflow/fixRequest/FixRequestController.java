@@ -1,5 +1,7 @@
 package com.gnomeshift.mfixflow.fixRequest;
 
+import com.gnomeshift.mfixflow.statusLogger.StatusLogDTO;
+import com.gnomeshift.mfixflow.statusLogger.StatusLogService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,25 @@ public class FixRequestController {
     @Autowired
     private FixRequestService fixRequestService;
 
+    @Autowired
+    private StatusLogService statusLogService;
+
+    @GetMapping("/{id}/logs")
+    public List<StatusLogDTO> getAllLogs(@PathVariable int id) {
+        return statusLogService.getAllLogs(id);
+    }
+
+    @DeleteMapping("/logs")
+    public ResponseEntity<?> deleteLogs() {
+        try {
+            statusLogService.deleteAllLogs();
+            return ResponseEntity.noContent().build();
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @GetMapping
     public List<FixRequestDTO> getAllRequests() {
         return fixRequestService.getAllRequests();
@@ -23,17 +44,17 @@ public class FixRequestController {
         return fixRequestService.getRequestById(id);
     }
 
-    @GetMapping("/bydevice/{id}")
+    @GetMapping("/by-device/{id}")
     public List<FixRequestDTO> getAllRequestsByDeviceId(@PathVariable int id) {
         return fixRequestService.getAllRequestsByDeviceId(id);
     }
 
-    @GetMapping("/bymaster/{id}")
-    public List<FixRequestDTO> getAllRequestsByMasterId(@PathVariable int id) {
-        return fixRequestService.getAllRequestsByMasterId(id);
+    @GetMapping("/by-assignee/{id}")
+    public List<FixRequestDTO> getAllRequestsByAssigneeId(@PathVariable int id) {
+        return fixRequestService.getAllRequestsByAssigneeId(id);
     }
 
-    @GetMapping("/bydefect/{id}")
+    @GetMapping("/by-defect/{id}")
     public List<FixRequestDTO> getAllRequestsByDefectId(@PathVariable int id) {
         return fixRequestService.getAllRequestsByDefectId(id);
     }
@@ -62,7 +83,7 @@ public class FixRequestController {
     public ResponseEntity<FixRequestDTO> deleteRequest(@PathVariable int id) {
         try {
             fixRequestService.deleteRequest(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         }
         catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();

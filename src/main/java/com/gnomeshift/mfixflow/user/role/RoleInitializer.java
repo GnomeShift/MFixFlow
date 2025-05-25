@@ -1,0 +1,27 @@
+package com.gnomeshift.mfixflow.user.role;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class RoleInitializer {
+    @Bean
+    public CommandLineRunner initializeRoles(RoleRepository roleRepository) {
+        return args -> {
+            if (roleRepository.count() == 0) {
+                Role adminRole = new Role();
+                adminRole.setName(Roles.ADMIN);
+                roleRepository.save(adminRole);
+
+                Role masterRole = new Role();
+                masterRole.setName(Roles.MASTER);
+                roleRepository.save(masterRole);
+
+                Role userRole = new Role();
+                userRole.setName(Roles.USER);
+                roleRepository.save(userRole);
+            }
+        };
+    }
+}

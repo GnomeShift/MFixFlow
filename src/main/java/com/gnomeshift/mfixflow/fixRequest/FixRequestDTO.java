@@ -12,7 +12,7 @@ public class FixRequestDTO {
 
     private String description;
     private FixRequestStatus status;
-    private long masterId;
+    private long assigneeId;
     private long deviceId;
     private long defectId;
 }

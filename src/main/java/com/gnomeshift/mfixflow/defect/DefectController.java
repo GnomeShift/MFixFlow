@@ -1,4 +1,4 @@
-package com.gnomeshift.mfixflow.user;
+package com.gnomeshift.mfixflow.defect;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,20 +8,25 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
-public class UserController {
+@RequestMapping("/api/defects")
+public class DefectController {
     @Autowired
-    private UserService userService;
+    private DefectService defectService;
 
     @GetMapping
-    public List<UserDTO> getAllUsers() {
-        return userService.getAllUsers();
+    public List<DefectDTO> getAllDefects() {
+        return defectService.getAllDefects();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable long id) {
+    public DefectDTO getDefectById(@PathVariable int id) {
+        return defectService.getDefectById(id);
+    }
+
+    @PostMapping
+    public ResponseEntity<DefectDTO> addDefect(@RequestBody DefectDTO defectDTO) {
         try {
-            return ResponseEntity.ok(userService.getUserById(id));
+            return ResponseEntity.ok(defectService.addDefect(defectDTO));
         }
         catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -29,9 +34,9 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable long id, @RequestBody UserDTO userDTO) {
+    public ResponseEntity<DefectDTO> updateDefect(@PathVariable long id, @RequestBody DefectDTO defectDTO) {
         try {
-            return ResponseEntity.ok(userService.updateUser(id, userDTO));
+            return ResponseEntity.ok(defectService.updateDefect(id, defectDTO));
         }
         catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -39,9 +44,9 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<User> deleteUser(@PathVariable long id) {
+    public ResponseEntity<DefectDTO> deleteDefect(@PathVariable long id) {
         try {
-            userService.deleteUser(id);
+            defectService.deleteDefect(id);
             return ResponseEntity.noContent().build();
         }
         catch (EntityNotFoundException e) {
