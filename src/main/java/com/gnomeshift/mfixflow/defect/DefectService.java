@@ -22,6 +22,13 @@ public class DefectService {
         return dto;
     }
 
+    private DefectDTO fillDefectDTO(Defect defect, DefectDTO defectDTO) {
+        defect.setDescription(defectDTO.getDescription());
+        defect.setName(defectDTO.getName());
+
+        return convertToDTO(defectRepository.save(defect));
+    }
+
     public List<DefectDTO> getAllDefects() {
         return defectRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
     }
@@ -29,13 +36,6 @@ public class DefectService {
     public DefectDTO getDefectById(long id) {
         return defectRepository.findById(id).map(this::convertToDTO)
                 .orElseThrow(() -> new EntityNotFoundException("Defect not found"));
-    }
-
-    private DefectDTO fillDefectDTO(Defect defect, DefectDTO defectDTO) {
-        defect.setDescription(defectDTO.getDescription());
-        defect.setName(defectDTO.getName());
-
-        return convertToDTO(defectRepository.save(defect));
     }
 
     public DefectDTO addDefect(DefectDTO defectDTO) {

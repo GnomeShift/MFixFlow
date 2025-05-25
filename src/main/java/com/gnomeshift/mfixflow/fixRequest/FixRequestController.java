@@ -24,13 +24,13 @@ public class FixRequestController {
     }
 
     @DeleteMapping("/logs")
-    public ResponseEntity<StatusLogDTO> deleteLogs() {
+    public ResponseEntity<?> deleteLogs() {
         try {
             statusLogService.deleteAllLogs();
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         }
         catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -83,7 +83,7 @@ public class FixRequestController {
     public ResponseEntity<FixRequestDTO> deleteRequest(@PathVariable int id) {
         try {
             fixRequestService.deleteRequest(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         }
         catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
