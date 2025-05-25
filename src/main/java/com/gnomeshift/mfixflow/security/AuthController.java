@@ -4,7 +4,6 @@ import com.gnomeshift.mfixflow.security.request.LoginRequest;
 import com.gnomeshift.mfixflow.security.request.ChangePasswordRequest;
 import com.gnomeshift.mfixflow.security.request.RegisterRequest;
 import com.gnomeshift.mfixflow.security.response.JwtResponse;
-import com.gnomeshift.mfixflow.security.response.MessageResponse;
 import com.gnomeshift.mfixflow.security.util.JwtUtils;
 import com.gnomeshift.mfixflow.security.util.UserDetailsImpl;
 import com.gnomeshift.mfixflow.user.*;
@@ -17,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -58,7 +58,7 @@ public class AuthController {
 
         if (bruteforceProtection.isLocked(email)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new MessageResponse("Too many login attempts. Try again in " +
+                    .body(new LockedException("Too many login attempts. Try again in " +
                             bruteforceProtection.getLockTime(email) + " minutes"));
         }
 
@@ -79,14 +79,14 @@ public class AuthController {
         }
         catch (BadCredentialsException e) {
             bruteforceProtection.registerFailedLogin(email);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Invalid credentials!"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new BadCredentialsException("Invalid credentials!"));
         }
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Email is already in use!"));
+            return ResponseEntity.badRequest().body(new BadCredentialsException("Email is already in use!"));
         }
 
         User user = new User();
